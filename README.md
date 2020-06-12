@@ -1,13 +1,15 @@
 # Object Assign Reducer
 
-A utility to reduce an object assignment of properties into a new state.
+[![Build Status](https://travis-ci.com/AlpacaTravel/object-assign-reducer.svg?branch=master)](https://travis-ci.com/AlpacaTravel/object-assign-reducer)[![Coverage Status](https://coveralls.io/repos/github/AlpacaTravel/object-assign-reducer/badge.svg?branch=master)](https://coveralls.io/github/AlpacaTravel/object-assign-reducer?branch=master)![MIT](https://img.shields.io/npm/l/@alpaca-travel/object-assign-reducer)
+
+A "hideous" utility to reduce an object assignment of properties into a new state.
 
 This exists for a use case where you wish to apply an object property and automatically remove or update other properties based on a set of rules. In this case, we need to be able to target a number of conditions, such as describing edge-cases and compatible states to apply a criteria based on the resulting object.
 
 A couple of special things:
 
 - If the supplied rule matches, but then does not transition the object away from a match, it will throw an error
-- Rules are applied continually until there is no further transitions
+- Rules are applied continually until there is no further state transitions
 
 ```javascript
 const { assign } = require("@alpaca-travel/object-assign-reducer");
@@ -31,6 +33,7 @@ const changeState = { category: "stay" };
 const rules = [
   {
     // Setup a matching rules to take the before value, and the after value
+    // Return true when we want to match against this rule
     match: (before, after) =>
       // Category does has changed
       before.category !== after.category &&
