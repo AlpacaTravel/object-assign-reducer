@@ -1,4 +1,4 @@
-# Fexp-js Object Reducer
+# Object Assign Reducer
 
 A utility to reduce an object assignment of properties into a new state.
 
@@ -10,7 +10,60 @@ A couple of special things:
 - Rules are applied continually until there is no further transitions
 
 ```javascript
-const { assign } = require("@alpaca-travel/object-assign-rules");
+const { assign } = require("@alpaca-travel/fexp-js-object-reducer");
+
+// State before
+const state = {
+  category: "eat",
+  subCategory: "restaurant",
+  tags: ["tag1"],
+};
+// Changing state
+const changeState = { category: "stay" };
+
+// We want to eliminate the subcategory on change
+
+// Traditional assign has not subtle rules
+// Object.assign({}, state, apply);
+// { category: stay, subCategory: restaurant }
+
+// Describing rules as collections of match/perform
+const rules = [
+  {
+    // Setup a matching rul
+    match: (before, after) => {
+      if (
+        // Category does has changed
+        before.category !== after.category &&
+        // Has a subcategory
+        before.subCategory &&
+        after.subCategory
+      ) {
+        return true;
+      }
+      return false;
+    },
+    // Perform a modification to the object
+    perform: (obj) => {
+      // Poor mans clone
+      const val = JSON.parse(JSON.stringify(obj));
+      delete val.subCategory;
+      return val;
+    },
+  },
+
+  // More rules
+];
+
+const value = assign({ rules })(state, changeState);
+// { category: 'stay' }
+```
+
+## Fexp-js to externaliuse
+
+```javascript
+const { assign } = require("@alpaca-travel/fexp-js-object-reducer");
+const { parse } = require("@alpaca-travel/fexp-js");
 const lang = require("@alpaca-travel/fexp-js-lang");
 
 // Create some rules
@@ -19,12 +72,13 @@ const rules = [
     match: [
       // Use a fexp-js rule for expressions
       "all",
-      ["!=", ["get", "before.category"], ["get", "next.category"]],
-      ["exists", ["get", "before.subCategory"]],
-      ["exists", ["get", "next.subCategory"]],
+      ["!=", ["get", "category"], ["get", "category", ["fn-arg", 1]]],
+      ["exists", ["get", "subCategory"]],
+      ["exists", ["get", "subCategory", ["fn-arg", 1]]],
     ],
-    actions: [{ type: "remove", args: ["subCategory"] }],
+    perform: ["remove", "subCategory"],
   },
+  // ... more rules here
 ];
 
 // Out state object
@@ -37,8 +91,52 @@ const apply = { category: "stay" };
 // Invalid object state, the subCategory does not match
 
 // Apply some state with some state rules
-const nextState = assign({ rules, lang })(state, change);
+const nextState = assign({ rules, parse, lang })(state, change);
 
 console.log(nextState);
 // { category: stay }
+```
+
+## Fexp-js lang enhancements
+
+```javascript
+const { parse, langs } = require("@alpaca-travel/fexp-js");
+const stdLang = require("@alpaca-travel/fexp-js-lang");
+const { lang: shim } = require("@alpaca-travel/fexp-js-object-reducer");
+
+const expr = [
+  "reducer-assign",
+  // Matcher function
+  [
+    "fn",
+    [
+      "all",
+      ["!=", ["get", "category"], ["get", "category", ["fn-arg", 1]]],
+      ["exists", ["get", "subCategory"]],
+      ["exists", ["get", "subCategory", ["fn-arg", 1]]],
+    ],
+  ],
+  // Action
+  ["fn", ["remove", "subCategory"]],
+
+  // ... more can go here
+
+  // The context of the second argument
+  ["fn-arg", 1],
+];
+
+const fn = parse(expr, langs(stdLang, shim));
+
+// State before
+const state = {
+  category: "eat",
+  subCategory: "restaurant",
+  tags: ["tag1"],
+};
+// Changing state
+const changeState = { category: "stay" };
+
+const result = fn(state, changeState);
+
+// { category: 'eat', tags: ['tag1'] }
 ```
