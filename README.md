@@ -30,19 +30,14 @@ const changeState = { category: "stay" };
 // Describing rules as collections of match/perform
 const rules = [
   {
-    // Setup a matching rul
-    match: (before, after) => {
-      if (
-        // Category does has changed
-        before.category !== after.category &&
-        // Has a subcategory
-        before.subCategory &&
-        after.subCategory
-      ) {
-        return true;
-      }
-      return false;
-    },
+    // Setup a matching rules to take the before value, and the after value
+    match: (before, after) =>
+      // Category does has changed
+      before.category !== after.category &&
+      // Has a subcategory
+      before.subCategory &&
+      after.subCategory,
+
     // Perform a modification to the object
     perform: (obj) => {
       // Poor mans clone
@@ -52,7 +47,7 @@ const rules = [
     },
   },
 
-  // More rules
+  // ... More rules added here
 ];
 
 const value = assign({ rules })(state, changeState);
