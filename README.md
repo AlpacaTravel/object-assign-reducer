@@ -59,7 +59,9 @@ const value = assign({ rules })(state, changeState);
 // { category: 'stay' }
 ```
 
-## Fexp-js to externaliuse
+## Fexp-js Externalise
+
+We often use a scripting configuration by leveraging `@alpaca-travel/fexp-js`.
 
 ```javascript
 const { assign } = require("@alpaca-travel/fexp-js-object-reducer");
@@ -97,7 +99,9 @@ console.log(nextState);
 // { category: stay }
 ```
 
-## Fexp-js lang enhancements
+## Fexp-js Lang Feature
+
+This is as a complete language enhancement for fexp-js scripting
 
 ```javascript
 const { parse, langs } = require("@alpaca-travel/fexp-js");
