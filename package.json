@@ -2,6 +2,9 @@
   "name": "@alpaca-travel/object-assign-reducer",
   "version": "1.0.0",
   "main": "src/index.js",
+  "files": [
+    "src"
+  ],
   "license": "MIT",
   "scripts": {
     "test": "jest",

@@ -203,6 +203,5 @@ const lang = {
 
 module.exports = {
   assign,
-  rulesParse,
   lang,
 };
