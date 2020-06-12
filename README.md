@@ -115,9 +115,13 @@ const expr = [
     "fn",
     [
       "all",
-      ["!=", ["get", "category", ['fn-arg', 0]], ["get", "category", ["fn-arg", 1]]],
-      ["exists", ["get", "subCategory"], ['fn-arg', 0]],
-      ["exists", ["get", "subCategory", ["fn-arg", 1]],
+      [
+        "!=",
+        ["get", "category", ["fn-arg", 0]],
+        ["get", "category", ["fn-arg", 1]],
+      ],
+      ["exists", ["get", "subCategory", ["fn-arg", 0]]],
+      ["exists", ["get", "subCategory", ["fn-arg", 1]]],
     ],
   ],
   // Action
