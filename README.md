@@ -59,46 +59,6 @@ const value = assign({ rules })(state, changeState);
 // { category: 'stay' }
 ```
 
-## Fexp-js Externalise
-
-We often use a scripting configuration by leveraging `@alpaca-travel/fexp-js`.
-
-```javascript
-const { assign } = require("@alpaca-travel/object-assign-reducer");
-const { parse } = require("@alpaca-travel/fexp-js");
-const lang = require("@alpaca-travel/fexp-js-lang");
-
-// Create some rules
-const rules = [
-  {
-    match: [
-      // Use a fexp-js rule for expressions
-      "all",
-      ["!=", ["get", "category"], ["get", "category", ["fn-arg", 1]]],
-      ["exists", ["get", "subCategory"]],
-      ["exists", ["get", "subCategory", ["fn-arg", 1]]],
-    ],
-    perform: ["remove", "subCategory"],
-  },
-  // ... more rules here
-];
-
-// Out state object
-const state = { category: "eat", subCategory: "restaurant" };
-const apply = { category: "stay" };
-
-// Traditional assign has not subtle rules
-// Object.assign({}, state, apply);
-// { category: stay, subCategory: restaurant }
-// Invalid object state, the subCategory does not match
-
-// Apply some state with some state rules
-const nextState = assign({ rules, parse, lang })(state, change);
-
-console.log(nextState);
-// { category: stay }
-```
-
 ## Fexp-js Lang Feature
 
 This is as a complete language enhancement for fexp-js scripting
@@ -106,25 +66,33 @@ This is as a complete language enhancement for fexp-js scripting
 ```javascript
 const { parse, langs } = require("@alpaca-travel/fexp-js");
 const stdLang = require("@alpaca-travel/fexp-js-lang");
-const { lang: shim } = require("@alpaca-travel/object-assign-reducer");
+const {
+  lang: newLangFeatures,
+} = require("@alpaca-travel/object-assign-reducer");
 
+// Define this in YAML/JSON, and can be external to your application code
 const expr = [
   "reducer-assign",
   // Matcher function
   [
     "fn",
     [
+      // All conditions are true in order to perform this action
       "all",
+      // Categories don't match
+      // fn-arg 0 = before
+      // fn-arg 1 = after
       [
         "!=",
         ["get", "category", ["fn-arg", 0]],
         ["get", "category", ["fn-arg", 1]],
       ],
+      // They have sub-categories
       ["exists", ["get", "subCategory", ["fn-arg", 0]]],
       ["exists", ["get", "subCategory", ["fn-arg", 1]]],
     ],
   ],
-  // Action
+  // Action to remove the sub category
   ["fn", ["remove", "subCategory"]],
 
   // ... more can go here
@@ -133,7 +101,8 @@ const expr = [
   ["fn-arg", 1],
 ];
 
-const fn = parse(expr, langs(stdLang, shim));
+// Fn now contains all the rules
+const fn = parse(expr, langs(stdLang, newLangFeatures));
 
 // State before
 const state = {
