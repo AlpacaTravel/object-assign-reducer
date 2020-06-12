@@ -2,110 +2,10 @@ const _isEqual = require("lodash.isequal");
 const _clone = require("lodash.clone");
 const assert = require("assert");
 
-const remove = (args) => {
-  const clone = _clone(args[1] || args.context.vars.arguments[0]);
-  const props = [...args];
-  delete clone[props[0]];
-  return clone;
-};
-
-/**
- * Take a set of defined rules, and validate/optimise
- *
- * rules: [
- *   {
- *     match: <fexp-js-expression to return true/false>
- *     perform: <fexp-js-expresion to modify>
- *   }
- * ]
- **/
-const rulesParse = (rules, { warn, lang, parse }) => {
-  // Fexpjs
-  const mutatorLang = {
-    remove,
-  };
-  const langImplementation = Object.assign(lang || {}, mutatorLang);
-
-  return rules
-    .map((r) => {
-      try {
-        assert(
-          Array.isArray(r.perform) || r.perform,
-          "Should supply perform for this"
-        );
-        assert(
-          Array.isArray(r.match) ||
-            ["function", "boolean"].indexOf(typeof r.match) > -1,
-          "Should provide a match statement"
-        );
-      } catch (e) {
-        if (warn === true) {
-          console.warn(e);
-          return undefined;
-        }
-        throw e;
-      }
-      return Object.assign({}, r, {
-        matcher: (() => {
-          if (typeof r.match === "boolean") {
-            return r.match;
-          }
-          if (Array.isArray(r.match)) {
-            return parse(r.match, langImplementation);
-          }
-          return r.match;
-        })(),
-        performer: (() => {
-          if (typeof r.perform === "function") {
-            return r.perform;
-          }
-          if (Array.isArray(r.perform)) {
-            return parse(r.perform, langImplementation);
-          }
-          return r.perform;
-        })(),
-      });
-    })
-    .filter((rule) => rule);
-};
-
-/**
- * Process an assignment
- * @param {*} options
- */
-const assign = (options) => {
-  // Obtain the rules ready for transition
-  const rulesParsed = (() => {
-    // Create rules
-    if (!options.rules || options.rulesParsed) {
-      return [];
-    }
-    if (options.rulesParsed) {
-      return options.rulesParsed;
-    }
-    return rulesParse(options.rules, {
-      warn: options.warn === true,
-      lang: options.lang,
-      parse: options.parse,
-    });
-  })();
-
-  // Prepare the options for subsequent calls
-  const optimisedOptions = Object.assign({}, options, { rulesParsed });
-
-  // Return the reducer
-  return (obj, ...next) => {
-    if (!next.length) {
-      return assignOnce(obj, {}, options);
-    }
-
-    return next.reduce((c, n) => assignOnce(c, n, optimisedOptions), obj);
-  };
-};
-
-const assignOnce = (before, apply, options = {}) => {
-  rulesParsed = options.rulesParsed;
-  assert(rulesParsed, "Missing the parsed fules");
+// Take a before value, an applied value, then the parsed rules
+const assignOnce = (before, apply, rules) => {
+  assert(rules, "Missing the parsed fules");
+  const rulesParsed = [...rules];
 
   // Build a transition of rules
   let transitioning = Object.assign({}, before, apply);
@@ -167,8 +67,38 @@ const assignOnce = (before, apply, options = {}) => {
   return transitioning;
 };
 
-// reducer-assign, match, result, match, result, action, action
+/**
+ * Process an assignment
+ * @param {*} options
+ */
+const assign = (options) => {
+  // Obtain the rules ready for transition
+  const rulesParsed = (() => {
+    // Create rules
+    if (!options.rules || options.rulesParsed) {
+      return [];
+    }
+    if (options.rulesParsed) {
+      return options.rulesParsed;
+    }
+    return rulesParse(options.rules, {
+      warn: options.warn === true,
+      lang: options.lang,
+      parse: options.parse,
+    });
+  })();
 
+  // Return the reducer
+  return (obj, ...next) => {
+    if (!next.length) {
+      return assignOnce(obj, {}, options);
+    }
+
+    return next.reduce((c, n) => assignOnce(c, n, rulesParsed), obj);
+  };
+};
+
+// Fexp lang shim
 const reducerAssign = (args) => {
   const iterator = args[Symbol.iterator]();
 
@@ -202,7 +132,68 @@ const reducerAssign = (args) => {
 
   const context = args.context.vars.arguments[0];
 
-  return assignOnce(context, assignVal, { rulesParsed: rulesParse(rules, {}) });
+  return assignOnce(context, assignVal, rulesParse(rules, {}));
+};
+
+const remove = (args) => {
+  const clone = _clone(args[1] || args.context.vars.arguments[0]);
+  const props = [...args];
+  delete clone[props[0]];
+  return clone;
+};
+
+/**
+ * Take a set of defined rules, and validate/optimise
+ *
+ * rules: [
+ *   {
+ *     match: <fexp-js-expression to return true/false>
+ *     perform: <fexp-js-expresion to modify>
+ *   }
+ * ]
+ **/
+const rulesParse = (rules, { warn, lang, parse }) => {
+  return rules
+    .map((r) => {
+      try {
+        assert(
+          Array.isArray(r.perform) || r.perform,
+          "Should supply perform for this"
+        );
+        assert(
+          Array.isArray(r.match) ||
+            ["function", "boolean"].indexOf(typeof r.match) > -1,
+          "Should provide a match statement"
+        );
+      } catch (e) {
+        if (warn === true) {
+          console.warn(e);
+          return undefined;
+        }
+        throw e;
+      }
+      return Object.assign({}, r, {
+        matcher: (() => {
+          if (typeof r.match === "boolean") {
+            return r.match;
+          }
+          if (Array.isArray(r.match)) {
+            return parse(r.match, lang);
+          }
+          return r.match;
+        })(),
+        performer: (() => {
+          if (typeof r.perform === "function") {
+            return r.perform;
+          }
+          if (Array.isArray(r.perform)) {
+            return parse(r.perform, lang);
+          }
+          return r.perform;
+        })(),
+      });
+    })
+    .filter((rule) => rule);
 };
 
 const lang = {

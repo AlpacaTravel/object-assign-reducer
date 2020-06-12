@@ -10,7 +10,7 @@ A couple of special things:
 - Rules are applied continually until there is no further transitions
 
 ```javascript
-const { assign } = require("@alpaca-travel/fexp-js-object-reducer");
+const { assign } = require("@alpaca-travel/object-assign-reducer");
 
 // State before
 const state = {
@@ -64,7 +64,7 @@ const value = assign({ rules })(state, changeState);
 We often use a scripting configuration by leveraging `@alpaca-travel/fexp-js`.
 
 ```javascript
-const { assign } = require("@alpaca-travel/fexp-js-object-reducer");
+const { assign } = require("@alpaca-travel/object-assign-reducer");
 const { parse } = require("@alpaca-travel/fexp-js");
 const lang = require("@alpaca-travel/fexp-js-lang");
 
@@ -106,7 +106,7 @@ This is as a complete language enhancement for fexp-js scripting
 ```javascript
 const { parse, langs } = require("@alpaca-travel/fexp-js");
 const stdLang = require("@alpaca-travel/fexp-js-lang");
-const { lang: shim } = require("@alpaca-travel/fexp-js-object-reducer");
+const { lang: shim } = require("@alpaca-travel/object-assign-reducer");
 
 const expr = [
   "reducer-assign",

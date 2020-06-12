@@ -91,7 +91,7 @@ describe("State Transitions", () => {
       ];
 
       expect(
-        assign({ rules, lang: stdLang, parse })(
+        assign({ rules, lang: langs(stdLang, shimLang), parse })(
           { category: "a", subCategory: "a", region: "a" },
           { category: "a", region: "b" }
         )
@@ -100,7 +100,7 @@ describe("State Transitions", () => {
       });
 
       expect(
-        assign({ rules, lang: stdLang, parse })(
+        assign({ rules, lang: langs(stdLang, shimLang), parse })(
           { category: "a", subCategory: "a", region: "a" },
           { category: "b", region: "a" }
         )
@@ -110,7 +110,7 @@ describe("State Transitions", () => {
       });
 
       expect(
-        assign({ rules, lang: stdLang, parse })(
+        assign({ rules, lang: langs(stdLang, shimLang), parse })(
           { category: "a", subCategory: "a", region: "a" },
           { category: "b", region: "b" }
         )
