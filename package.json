@@ -14,11 +14,11 @@
     "jest": true
   },
   "devDependencies": {
+    "@alpaca-travel/fexp-js-lang": "^1.0.0-alpha.0",
+    "@alpaca-travel/fexp-js": "^1.0.0-alpha.0",
     "jest": "^26.0.1"
   },
   "dependencies": {
-    "@alpaca-travel/fexp-js-lang": "^1.0.0-alpha.0",
-    "@alpaca-travel/fexp-js": "^1.0.0-alpha.0",
     "assert": "^2.0.0",
     "lodash.clone": "^4.5.0",
     "lodash.isequal": "^4.5.0"
