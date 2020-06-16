@@ -115,3 +115,5 @@ const result = fn(state, changeState);
 
 // { category: 'eat', tags: ['tag1'] }
 ```
+
+[![Edit Object Assign Reducer with Fexp-js](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/silent-sun-yugzk?fontsize=14&hidenavigation=1&theme=dark)
