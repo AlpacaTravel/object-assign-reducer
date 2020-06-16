@@ -1,6 +1,11 @@
 const _isEqual = require("lodash.isequal");
 const _clone = require("lodash.clone");
-const assert = require("assert");
+
+const assert = (result, message) => {
+  if (!result) {
+    throw new Error(message);
+  }
+};
 
 // Take a before value, an applied value, then the parsed rules
 const assignOnce = (before, apply, rules) => {
