@@ -1,6 +1,6 @@
 # Object Assign Reducer
 
-[![Build Status](https://travis-ci.com/AlpacaTravel/object-assign-reducer.svg?branch=master)](https://travis-ci.com/AlpacaTravel/object-assign-reducer)[![Coverage Status](https://coveralls.io/repos/github/AlpacaTravel/object-assign-reducer/badge.svg?branch=master)](https://coveralls.io/github/AlpacaTravel/object-assign-reducer?branch=master)![MIT](https://img.shields.io/npm/l/@alpaca-travel/object-assign-reducer)
+[![Build Status](https://travis-ci.org/AlpacaTravel/object-assign-reducer.svg?branch=master)](https://travis-ci.org/AlpacaTravel/object-assign-reducer)[![Coverage Status](https://coveralls.io/repos/github/AlpacaTravel/object-assign-reducer/badge.svg?branch=master)](https://coveralls.io/github/AlpacaTravel/object-assign-reducer?branch=master)![MIT](https://img.shields.io/npm/l/@alpaca-travel/object-assign-reducer)
 
 A "hideous" utility to reduce an object assignment of properties into a new state.
 
