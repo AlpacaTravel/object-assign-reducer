@@ -59,7 +59,9 @@ const value = assign({ rules })(state, changeState);
 
 ## Fexp-js Lang Feature
 
-This is as a complete language enhancement for fexp-js scripting
+This is as a language enhancement for fexp-js scripting.
+
+[![Edit Object Assign Reducer with Fexp-js](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/silent-sun-yugzk?fontsize=14&hidenavigation=1&theme=dark)
 
 ```javascript
 const { parse, langs } = require("@alpaca-travel/fexp-js");
@@ -115,5 +117,3 @@ const result = fn(state, changeState);
 
 // { category: 'eat', tags: ['tag1'] }
 ```
-
-[![Edit Object Assign Reducer with Fexp-js](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/silent-sun-yugzk?fontsize=14&hidenavigation=1&theme=dark)
